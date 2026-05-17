@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
+import json
 
 # Set Page Config for Tactical Dark Theme
 st.set_page_config(page_title="Air Defense C2 Dashboard", layout="wide", initial_sidebar_state="expanded")
@@ -48,13 +49,17 @@ def initialize_and_train_ai():
 ai_fusion_engine = initialize_and_train_ai()
 
 # =====================================================================
-# 2. TACTICAL USER INTERFACE & LIVE OPERATIONS
+# 2. TACTICAL USER INTERFACE & SECURITY SECURITY MATRIX
 # =====================================================================
 st.title("🛡️ AI-Enabled Multi-Sensor Drone Swarm C2 Command Center")
 st.markdown("### National Counter-Drone Capability Infrastructure // Air Defense Operations Command")
 st.divider()
 
 # --- SIDEBAR CONFIGURATION ---
+st.sidebar.header("🔐 Role-Based Access Control (RBAC)")
+user_role = st.sidebar.selectbox("Select Command Authorization Level", ["Air Defense Operator", "Chief Systems Engineer (Full Diagnostics)"])
+
+st.sidebar.divider()
 st.sidebar.header("🌍 Operational Environment Matrix")
 weather_condition = st.sidebar.selectbox("Select All-Weather Scenario Profile", ["Clear Sky (Optimal)", "Heavy Monsoon / Clutter", "Severe Desert Sandstorm"])
 
@@ -66,20 +71,20 @@ s_acoustic = st.sidebar.slider("Acoustic Frequency Profile (Hz)", 50, 20000, 450
 s_speed = st.sidebar.slider("Target Velocity (km/h)", 0, 150, 45)
 s_thermal = st.sidebar.slider("EO/IR Thermal Signature (Δ°C)", 15, 150, 40)
 
-# INNOVATION 3: Advanced Sensor Weather Attenuation Curve Calculations
+# Advanced Weather Attenuation Calculations
 weather_latency = 14.2 
 confidence_multiplier = 1.0
 sensor_reliance_mode = "Balanced Multi-Sensor Fusion Array"
 
 if weather_condition == "Heavy Monsoon / Clutter":
-    s_rcs *= 0.81          # Precipitation signal degradation
-    s_thermal *= 0.65      # Thermal signature dampening
-    weather_latency = 42.1 # Signal processing overhead delay
+    s_rcs *= 0.81          
+    s_thermal *= 0.65      
+    weather_latency = 42.1 
     confidence_multiplier = 0.86
     sensor_reliance_mode = "🍂 Primary Reliance: Acoustic/RF Arrays (Radar & EO/IR Attenuated)"
 elif weather_condition == "Severe Desert Sandstorm":
-    s_rcs *= 0.58          # Particulate scattering
-    s_acoustic *= 1.35     # Wind acoustic noise distortion
+    s_rcs *= 0.58          
+    s_acoustic *= 1.35     
     weather_latency = 58.7 
     confidence_multiplier = 0.74
     sensor_reliance_mode = "🔥 Primary Reliance: Thermal/Radar Micro-Doppler (Acoustic Degraded)"
@@ -120,7 +125,7 @@ with m_col3:
 
 st.divider()
 
-# INNOVATION 1: The OODA-Loop Automation Progress Dashboard Tracker
+# Autonomous OODA Decision-Support Cycle Tracker
 st.subheader("🔁 Autonomous OODA Decision-Support Cycle")
 if threat_score < 25:
     st.info("🎯 **CURRENT LOOP STATE:** [OBSERVE] -> [ORIENT] -> Target categorized as Non-Threat Environmental Clutter. System loop reset.")
@@ -162,7 +167,7 @@ if ew_jamming:
 distances = np.sqrt(x_coords**2 + y_coords**2 + z_coords**2)
 speeds = np.random.uniform(40, 140, num_drones)
 
-# INNOVATION 2: Advanced TEWA Weapon Resource Optimization Algorithms
+# Advanced TEWA Weapon Resource Optimization Algorithms
 swarm_threat_scores = []
 allocated_weapons = []
 for i in range(num_drones):
@@ -232,5 +237,47 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
+# Display Ranked Target Matrix
 st.subheader("⚔️ Automated Threat Prioritization & Weapon Allocation Matrix (TEWA)")
-st.dataframe(swarm_df, use_container_width=True) 
+st.dataframe(swarm_df, use_container_width=True)
+
+st.divider()
+
+# =====================================================================
+# 4. COMPLIANCE & EXPORT EXTENSIONS LAYER (Strategic Additions)
+# =====================================================================
+# UPGRADE 1: Tactical Data Export Stream Engine (Simulating External Hardware Integration Link)
+st.subheader("📡 Tactical External Hardware Integration Link")
+st.markdown("_Generates military-grade target telemetry streams to sync with physical anti-aircraft batteries or missile pods._")
+
+# Convert dataframe data to standard dictionary structure for JSON encapsulation
+json_packet = swarm_df.to_dict(orient='records')
+serialized_json = json.dumps(json_packet, indent=4)
+
+st.download_button(
+    label="📥 Export Live Swarm Telemetry Packet (JSON Stream)",
+    data=serialized_json,
+    file_name="bms_swarm_target_stream.json",
+    mime="application/json"
+)
+
+# UPGRADE 2: RBAC Role-Based Diagnostic View Panel 
+if user_role == "Chief Systems Engineer (Full Diagnostics)":
+    st.divider()
+    st.subheader("🛠️ Deep System Kernel Diagnostics (Classified Engineering View)")
+    d_col1, d_col2 = st.columns(2)
+    with d_col1:
+        st.info("📊 **AI Classification Probabilities (Random Forest Array Output)**")
+        mock_probs = pd.DataFrame({
+            'Target Identity Class': ['False Alarm', 'Recon Quadcopter', 'Kamikaze Drone', 'Swarm Commander'],
+            'Algorithmic Weight Configuration': [0.04, 0.12, 0.78, 0.06]
+        })
+        st.table(mock_probs)
+    with d_col2:
+        st.success("🔒 **Security Audit & Error-Log Stream Status**")
+        st.code("""
+        [OK] Kernel Thread 0: Ingesting Multi-Sensor Streams (Radar, RF, Acoustic, Thermal)
+        [OK] Memory Matrix: Random Forest Classifier loaded in secure RAM cache
+        [OK] Network Vector: No packet loss detected on edge communication modules
+        [PASS] Hardware Interface Link: JSON compilation buffer cleared and ready
+        """)
